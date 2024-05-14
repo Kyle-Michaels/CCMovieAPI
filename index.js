@@ -50,6 +50,28 @@ app.get('/movies', async (req, res) => {
     })
 })
 
+/**
+ * Handles GET request for a single movie by title.
+ * 
+ * @function
+ * @name getMovie
+ * @param {Object} - Express request with movie title parameter.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when the getMovie request process is complete.
+ * @throws {Error} - If permission is denied or unexpected error.
+ * @returns {Object} Movie - Object containing the requested movies data.
+ */
+app.get('movies/:Title', async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
+    .then((movie) => {
+      res.status(201).json(movie);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error :' + err);
+    })
+})
+
 
 // Listener
 app.listen(8080, () => {
