@@ -116,6 +116,58 @@ app.get('/movies/directors/:directorName', async (req, res) => {
     })
 })
 
+/**
+ * Handles POST request to register a new user.
+ * 
+ * @function
+ * @name registerUser
+ * @param {Object} - Express request.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when registerUser request process is complete.
+ * @throws {Error} - If permission is denied or unexpected error.
+ * @returns {Object} newUser - New user object
+ */
+app.post('/users',
+  [
+    check('Username', 'Username requires a minimum length of 5 characters.').isLength({ min: 5 }),
+    check('Username', 'Username is required.').not().isEmpty(),
+    check('Username', 'Username contains non alphanumeric characters - not allowd.').isAlphanumeric(),
+    check('Password', 'Password is required.').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ],
+  async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    await Users.findOne({ Username: req.body.Username })
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + ' already exists.');
+        } else {
+          Users.create({
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+            .then((user) => {
+              res.status(201).json(user)
+            })
+            .catch((err) => {
+              console.error(err);
+              res.status(500).send('Error: ' + err);
+            })
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      })
+  }
+)
+
 
 // Listener
 app.listen(8080, () => {
