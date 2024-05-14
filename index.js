@@ -3,10 +3,16 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+const Models = require('./models.js');
 
 
 // Define app
 const app = express();
+
+// Define models
+const Movies = Models.Movie;
+const Users = Models.User;
 
 /*---------- Middleware ----------*/
 
@@ -24,6 +30,8 @@ app.use((err, req, res, next) => {
 });
 
 
+// Connect to database
+mongoose.connect(process.env.CONNECTION_URI);
 
 
 /*---------- API Calls ----------*/
