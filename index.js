@@ -4,10 +4,15 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const morgan = require('morgan');
 
+
 // Define app
 const app = express();
 
 /*---------- Middleware ----------*/
+
+// BodyParser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Logger
 app.use(morgan('common'));
