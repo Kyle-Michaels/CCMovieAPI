@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/Kyle-Michaels/CCMovieAPI#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.0",
+    "mongoose": "^8.3.4",
     "morgan": "^1.10.0"
   }
 }
