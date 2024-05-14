@@ -94,6 +94,28 @@ app.get('/movies/genre/:genreName', async (req, res) => {
     })
 })
 
+/**
+ * Handles GET request for a director by name.
+ * 
+ * @function
+ * @name getDirector
+ * @param {Object} - Express request with director name parameter.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when the getDirector request process is complete.
+ * @throws {Error} - If permission is denied or unexpected error.
+ * @returns {Object} Director - Object containing the requested director data.
+ */
+app.get('/movies/directors/:directorName', async (req, res) => {
+  await Movies.findOne({ "Director.Name": req.params.directorName })
+    .then((director) => {
+      res.status(201).json(director.Director);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error :' + err);
+    })
+})
+
 
 // Listener
 app.listen(8080, () => {
