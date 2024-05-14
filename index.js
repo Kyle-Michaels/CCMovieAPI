@@ -173,6 +173,43 @@ app.post('/users',
   }
 )
 
+/**
+ * Handles PUT request to update a user by username.
+ * 
+ * @function
+ * @name updatedUser
+ * @param {Object} - Express request with username parameter.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when the updateUser request process is complete.
+ * @throws {Error} - If permission is denied or an unexpected error.
+ * @fires {Object} - updatedUser - Updated user object is sent in the response.
+ * @description Expects at least one field to update in the request body
+ */
+app.put('/users/:Username', async (req, res) => {
+  if (req.user.Username !== req.params.Username) {
+    return res.status(400).send('Permission denied');
+  }
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  await Users.findOneAndUpdate({ Username: req.params.Username },
+    {
+      $set:
+      {
+        Username: req.body.Username,
+        Password: hashedPassword,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+    },
+    { new: true })
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    })
+})
+
 
 // Listener
 app.listen(8080, () => {
