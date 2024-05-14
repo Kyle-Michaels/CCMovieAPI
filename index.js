@@ -268,6 +268,35 @@ app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
     })
 })
 
+/**
+ * Handles DELETE request to delete user account.
+ * 
+ * @function
+ * @name deleteUser
+ * @param {Object} - Express request with username parameter.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when the deleteUser request process is complete.
+ * @throws {Error} - If permission is denied or an unexpected error.
+ * @fires {string} Message - A message with the result of the user deletion process.
+ */
+app.delete('/users/:Username', async (req, res) => {
+  if (req.user.Username !== req.params.Username) {
+    return res.status(400).send('Permission denied.');
+  }
+  await Users.findOneAndDelete({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + ' was not found.');
+      } else {
+        res.status(200).send(req.params.Username + ' was deleted.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    })
+})
+
 
 // Listener
 app.listen(8080, () => {
