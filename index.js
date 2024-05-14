@@ -21,6 +21,11 @@ const Users = Models.User;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Authentication
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
+
 // Logger
 app.use(morgan('common'));
 
@@ -53,7 +58,7 @@ app.get('/', (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} []allMovies - An array of the movies collection.
  */
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.find()
     .then((movies) => {
       res.status(201).json(movies);
@@ -75,7 +80,7 @@ app.get('/movies', async (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} Movie - Object containing the requested movies data.
  */
-app.get('movies/:Title', async (req, res) => {
+app.get('movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.status(201).json(movie);
@@ -97,7 +102,7 @@ app.get('movies/:Title', async (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} Genre - Object containing the requested genre data.
  */
-app.get('/movies/genre/:genreName', async (req, res) => {
+app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ "Genre.Name": req.params.genreName })
     .then((genre) => {
       res.status(201).json(genre.Genre);
@@ -119,7 +124,7 @@ app.get('/movies/genre/:genreName', async (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} Director - Object containing the requested director data.
  */
-app.get('/movies/directors/:directorName', async (req, res) => {
+app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ "Director.Name": req.params.directorName })
     .then((director) => {
       res.status(201).json(director.Director);
@@ -194,7 +199,7 @@ app.post('/users',
  * @fires {Object} - updatedUser - Updated user object is sent in the response.
  * @description Expects at least one field to update in the request body
  */
-app.put('/users/:Username', async (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
   if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permission denied');
   }
@@ -230,7 +235,7 @@ app.put('/users/:Username', async (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} updatedUser - Updated user object with movie added to FavoriteMovies array is sent in the response.
  */
-app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
   if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permission denied.');
   }
@@ -259,7 +264,7 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} updatedUser - Updated user object with movie removed from FavoriteMovies array is sent in the response.
  */
-app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
   if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permission denied.');
   }
@@ -288,7 +293,7 @@ app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
  * @throws {Error} - If permission is denied or an unexpected error.
  * @fires {string} Message - A message with the result of the user deletion process.
  */
-app.delete('/users/:Username', async (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
   if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permission denied.');
   }
