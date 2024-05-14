@@ -72,6 +72,28 @@ app.get('movies/:Title', async (req, res) => {
     })
 })
 
+/**
+ * Handles GET request for a genre by name.
+ * 
+ * @function
+ * @name getGenre
+ * @param {Object} - Express request with genre name parameter.
+ * @param {Object} - Express response.
+ * @returns {Promise<void>} - A promise that resolves when the getGenre request process is complete.
+ * @throws {Error} - If permission is denied or unexpected error.
+ * @returns {Object} Genre - Object containing the requested genre data.
+ */
+app.get('/movies/genre/:genreName', async (req, res) => {
+  await Movies.findOne({ "Genre.Name": req.params.genreName })
+    .then((genre) => {
+      res.status(201).json(genre.Genre);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error :' + err);
+    })
+})
+
 
 // Listener
 app.listen(8080, () => {
