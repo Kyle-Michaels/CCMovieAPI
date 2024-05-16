@@ -2,6 +2,7 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
+const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -29,6 +30,9 @@ require('./passport');
 // Logger
 app.use(morgan('common'));
 
+// Fileupload
+app.use(fileUpload());
+
 // Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -40,7 +44,63 @@ app.use((err, req, res, next) => {
 mongoose.connect(process.env.CONNECTION_URI);
 
 
+// S3 bucket variables
+const s3Client = new S3Client({
+  region: 'us-west-1'
+})
+const bucket = process.env.BUCKET_NAME;
+
 /*---------- API Calls ----------*/
+
+/* S3 Bucket API */
+
+// Get images
+app.get('/images', (req, res) => {
+  listObjectParams = {
+    Bucket: bucket
+  };
+  s3Client.send(new ListObjectsV2Command(listObjectParams))
+    .then((listObjectResponse) => {
+      res.send(listObjectsResponse.Contents)
+    })
+});
+
+// Upload an image
+const UPLOAD_TEMP_PATH = './temp'
+app.post('/images', (req, res) => {
+  const file = req.files.image
+  const fileName = req.files.image.name
+  const tempPath = `${UPLOAD_TEMP_PATH}/${fileName}`
+  file.mv(tempPath, (err) => { res.status(500) })
+  const putObjectParams = {
+    Bucket: bucket,
+    Key: fileName,
+    Body: fs.readFileSync(tempPath)
+  };
+  s3Client.send(new PutObjectCommand(putObjectParams))
+    .then((putObjectResponse) => {
+      res.send(putObjectResponse)
+    })
+})
+
+// Get image by name
+app.get('/images/:fileName', async (req, res) => {
+  getObjectParams = {
+    Bucket: bucket,
+    Key: req.params.fileName
+  }
+  await s3Client.send(new GetObjectCommand(getObjectParams))
+    .then(async (getObjectResponse) => {
+      res.writeHead(200, {
+        'Content-Length': getObjectResponse.ContentLength
+      });
+      getObjectResponse.Body.transformToByteArray().then((buffer) => {
+        res.end(buffer);
+      });
+    })
+})
+
+/* Website and Database API */
 
 // Homepage
 app.get('/', (req, res) => {
