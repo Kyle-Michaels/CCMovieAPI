@@ -1,6 +1,7 @@
 // Require Dependancies
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const cors = require('cors');
 const fs = require('fs');
 const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const morgan = require('morgan');
@@ -21,6 +22,9 @@ const Users = Models.User;
 // BodyParser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Cors
+app.use(cors());
 
 // Authentication
 let auth = require('./auth')(app);
