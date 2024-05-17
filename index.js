@@ -140,7 +140,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
  * @throws {Error} - If permission is denied or unexpected error.
  * @returns {Object} Movie - Object containing the requested movies data.
  */
-app.get('movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.status(201).json(movie);
