@@ -12,6 +12,7 @@ const { check, validationResult } = require('express-validator');
 
 // Define app
 const app = express();
+app.use(fileUpload());
 
 // Define models
 const Movies = Models.Movie;
@@ -34,8 +35,6 @@ require('./passport');
 // Logger
 app.use(morgan('common'));
 
-// Fileupload
-app.use(fileUpload());
 
 // Error Handling
 app.use((err, req, res, next) => {
