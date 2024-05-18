@@ -60,12 +60,12 @@ const bucket = process.env.BUCKET_NAME;
 
 // Get images
 app.get('/images', (req, res) => {
-  listObjectParams = {
+  listObjectsParams = {
     Bucket: bucket
   };
-  s3Client.send(new ListObjectsV2Command(listObjectParams))
-    .then((listObjectResponse) => {
-      res.send(listObjectResponse.Contents)
+  s3Client.send(new ListObjectsV2Command(listObjectsParams))
+    .then((listObjectsResponse) => {
+      res.send(listObjectsResponse.Contents)
     })
 });
 
