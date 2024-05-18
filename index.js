@@ -59,7 +59,7 @@ const bucket = process.env.BUCKET_NAME;
 /* S3 Bucket API */
 
 // Get images
-app.get('/images', (req, res) => {
+app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   listObjectsParams = {
     Bucket: bucket
   };
@@ -71,7 +71,7 @@ app.get('/images', (req, res) => {
 
 // Upload an image
 const UPLOAD_TEMP_PATH = './temp'
-app.post('/images', (req, res) => {
+app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   const file = req.files.image
   const fileName = req.files.image.name
   const tempPath = `${UPLOAD_TEMP_PATH}/${fileName}`
@@ -88,7 +88,7 @@ app.post('/images', (req, res) => {
 })
 
 // Get image by name
-app.get('/images/:fileName', async (req, res) => {
+app.get('/images/:fileName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   getObjectParams = {
     Bucket: bucket,
     Key: req.params.fileName
