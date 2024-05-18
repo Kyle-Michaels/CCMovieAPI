@@ -65,7 +65,7 @@ app.get('/images', (req, res) => {
   };
   s3Client.send(new ListObjectsV2Command(listObjectParams))
     .then((listObjectResponse) => {
-      res.send(listObjectsResponse.Contents)
+      res.send(listObjectResponse.Contents)
     })
 });
 
