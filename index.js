@@ -88,7 +88,7 @@ app.post('/images', passport.authenticate('jwt', { session: false }), (req, res)
 })
 
 // Get image by name
-app.get('/images/:fileName', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/images/resized-images/:fileName', passport.authenticate('jwt', { session: false }), async (req, res) => {
   getObjectParams = {
     Bucket: bucket,
     Key: req.params.fileName
