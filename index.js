@@ -60,7 +60,8 @@ const bucket = process.env.BUCKET_NAME;
 // Get images
 app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   listObjectsParams = {
-    Bucket: bucket
+    Bucket: bucket,
+    Prefix: "resized-images/"
   };
   s3Client.send(new ListObjectsV2Command(listObjectsParams))
     .then((listObjectsResponse) => {
