@@ -65,7 +65,7 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
   };
   s3Client.send(new ListObjectsV2Command(listObjectsParams))
     .then((listObjectsResponse) => {
-      res.send(listObjectsResponse)
+      res.send(listObjectsResponse.Contents)
     })
 });
 
