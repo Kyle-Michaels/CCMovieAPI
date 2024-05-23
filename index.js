@@ -72,8 +72,8 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
 // Upload an image
 const UPLOAD_TEMP_PATH = './temp'
 app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const file = req.files.image
-  const fileName = req.files.image.name
+  const file = req.files.file
+  const fileName = req.files.file.name
   const tempPath = `${UPLOAD_TEMP_PATH}/${fileName}`
   file.mv(tempPath, (err) => { res.status(500) })
   const putObjectParams = {
