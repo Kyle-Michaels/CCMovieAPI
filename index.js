@@ -95,12 +95,13 @@ app.get('/images/:fileName', passport.authenticate('jwt', { session: false }), a
   }
   await s3Client.send(new GetObjectCommand(getObjectParams))
     .then(async (getObjectResponse) => {
-      res.writeHead(200, {
-        'Content-Length': getObjectResponse.ContentLength
-      });
-      getObjectResponse.Body.transformToByteArray().then((buffer) => {
-        res.end(buffer);
-      });
+      res.send(getObjectResponse);
+      // res.writeHead(200, {
+      //   'Content-Length': getObjectResponse.ContentLength
+      // });
+      // getObjectResponse.Body.transformToByteArray().then((buffer) => {
+      //   res.end(buffer);
+      // });
     })
 })
 
