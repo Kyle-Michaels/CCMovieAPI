@@ -71,7 +71,6 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
 
 // Upload an image
 app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
-  console.log(req.files)
   const file = req.files.image
   const fileName = req.files.image.name
   const putObjectParams = {
