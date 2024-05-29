@@ -70,16 +70,13 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
 });
 
 // Upload an image
-const UPLOAD_TEMP_PATH = './temp'
 app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   const file = req.files.image
   const fileName = req.files.image.name
-  const tempPath = `${UPLOAD_TEMP_PATH}/${fileName}`
-  file.mv(tempPath, (err) => { res.status(500) })
   const putObjectParams = {
     Bucket: bucket,
     Key: fileName,
-    Body: fs.readFileSync(tempPath)
+    Body: file.data
   };
   s3Client.send(new PutObjectCommand(putObjectParams))
     .then((putObjectResponse) => {
