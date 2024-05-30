@@ -75,8 +75,7 @@ app.post('/images', passport.authenticate('jwt', { session: false }), (req, res)
   const fileName = req.files.image.name
   const putObjectParams = {
     Bucket: bucket,
-    Key: fileName,
-    Prefix: 'original-images/',
+    Key: `original-images/${fileName}`,
     Body: file.data
   };
   s3Client.send(new PutObjectCommand(putObjectParams))
