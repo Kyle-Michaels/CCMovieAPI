@@ -72,7 +72,7 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
 // Upload an image
 app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   const file = req.files.image
-  const fileName = `original-images/${req.files.image.name}`
+  const fileName = req.files.image.name
   const putObjectParams = {
     Bucket: bucket,
     Key: fileName,
